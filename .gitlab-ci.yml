@@ -31,7 +31,9 @@ deploy_dags:
               image: alpine/git
               command: ["/bin/sh", "-c"]
               args:
-                - echo "📥 Cloning repo...";
+                - |
+                  set -e
+                  echo "📥 Cloning repo...";
                   # Dùng biến CI_SERVER_URL và CI_JOB_TOKEN để clone an toàn
                   # Lưu ý: Nếu gitlab runner trong k8s không phân giải được domain gitlab.vimc.com
                   # thì có thể phải thay bằng IP: http://gitlab-ci-token:${CI_JOB_TOKEN}@192.168.74.12:30080/${CI_PROJECT_PATH}.git
@@ -64,6 +66,8 @@ deploy_dags:
     # Apply Job vào K8s
     - kubectl apply -f sync-job.yaml
     
+    - kubectl delete job ${JOB_NAME} -n ${NAMESPACE} --ignore-not-found=true
+
     # Chờ Job chạy xong (Timeout 2 phút)
     - echo "⏳ Waiting for sync job..."
     - kubectl wait --for=condition=complete job/${JOB_NAME} -n ${NAMESPACE} --timeout=120s
