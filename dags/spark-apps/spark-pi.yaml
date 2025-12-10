@@ -19,6 +19,13 @@ spec:
       version: 3.5.1
     cores: 1
     memory: 512m
+    resources:
+    limits:
+      cpu: "1"
+      memory: "512Mi"
+    requests:
+      cpu: "1"
+      memory: "512Mi"
     serviceAccount: spark-application-sa
     securityContext:
       capabilities:
@@ -36,6 +43,13 @@ spec:
     instances: 1
     cores: 1
     memory: 512m
+    resources:
+    limits:
+      cpu: "1"
+      memory: "512Mi"
+    requests:
+      cpu: "1"
+      memory: "512Mi"
     securityContext:
       capabilities:
         drop:
