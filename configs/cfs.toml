@@ -1,0 +1,8 @@
+
+[[company]]
+id = "vimc"
+book_id = "CXR"
+base_url = "http://fast.camranhport.vn:56789/api"
+cfs_apis = ["get_trialbalance", "get_purchase", "get_sale" , "get_ar" , "get_ap"]
+username = "admin"
+password = "FD538CA3453EC9636B8BC209A7B161FA5F0F3E1506849BACE1A9D226A4DA7EAD"
