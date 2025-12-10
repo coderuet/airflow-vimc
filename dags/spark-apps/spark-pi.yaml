@@ -17,13 +17,9 @@ spec:
   driver:
     labels:
       version: 3.5.1
-    resources:
-      limits:
-        cpu: "1"
-        memory: "512Mi"
-      requests:
-        cpu: "1"
-        memory: "512Mi"
+    cores: 1
+    coreLimit: "1000m"
+    memory: "512m"
     serviceAccount: spark-application-sa
     securityContext:
       capabilities:
@@ -39,13 +35,9 @@ spec:
     labels:
       version: 3.5.1
     instances: 1
-    resources:
-      limits:
-        cpu: "1"
-        memory: "512Mi"
-      requests:
-        cpu: "1"
-        memory: "512Mi"
+    cores: 1
+    coreLimit: "1000m"
+    memory: "512m"
     securityContext:
       capabilities:
         drop:
