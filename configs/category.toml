@@ -1,0 +1,9 @@
+[[company]]
+id = "vimc"
+base_url = "https://example.com"
+category_apis = ["companies", "departments", "positions"]
+
+[[company]]
+id = "abc-logistics"
+base_url = "https://example.com/abc"
+category_apis = ["companies"]
