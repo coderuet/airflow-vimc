@@ -17,8 +17,6 @@ spec:
   driver:
     labels:
       version: 3.5.1
-    cores: 1
-    memory: 512m
     resources:
     limits:
       cpu: "1"
@@ -41,8 +39,6 @@ spec:
     labels:
       version: 3.5.1
     instances: 1
-    cores: 1
-    memory: 512m
     resources:
     limits:
       cpu: "1"
