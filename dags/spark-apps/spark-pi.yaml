@@ -18,12 +18,12 @@ spec:
     labels:
       version: 3.5.1
     resources:
-    limits:
-      cpu: "1"
-      memory: "512Mi"
-    requests:
-      cpu: "1"
-      memory: "512Mi"
+      limits:
+        cpu: "1"
+        memory: "512Mi"
+      requests:
+        cpu: "1"
+        memory: "512Mi"
     serviceAccount: spark-application-sa
     securityContext:
       capabilities:
@@ -40,12 +40,12 @@ spec:
       version: 3.5.1
     instances: 1
     resources:
-    limits:
-      cpu: "1"
-      memory: "512Mi"
-    requests:
-      cpu: "1"
-      memory: "512Mi"
+      limits:
+        cpu: "1"
+        memory: "512Mi"
+      requests:
+        cpu: "1"
+        memory: "512Mi"
     securityContext:
       capabilities:
         drop:
