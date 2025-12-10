@@ -33,7 +33,7 @@ with DAG(
 ) as dag:
     spark_pi_task = SparkKubernetesOperator(
         task_id='spark_kube_example',
-        namespace='vlp-tenantdvak01g-wsghwlhlt-data',
+        namespace='vlp-tenantdvak01g-wsghwlhlt-ingestion',
         application_file='spark-apps/spark-pi.yaml',
         kubernetes_conn_id='kubernetes_default'
     )

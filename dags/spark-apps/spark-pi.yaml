@@ -3,7 +3,7 @@ kind: SparkApplication
 metadata:
   name: spark-pi
   #namespace: default
-  namespace: vlp-tenantdvak01g-wsghwlhlt-data
+  namespace: vlp-tenantdvak01g-wsghwlhlt-ingestion
 spec:
   type: Scala
   mode: cluster
