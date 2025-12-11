@@ -17,8 +17,9 @@ logger = get_logger()
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "configs" / "cfs.toml"
 
 # Use your Airflow connection ID
-AWS_CONN_ID = "minio"      # <--- Airflow connection name
+AWS_CONN_ID = "minio"  # <--- Airflow connection name
 BUCKET_NAME = Variable.get("MINIO_BUCKET", default_var="")
+
 
 def failure_callback(context):
     error_message = str(context.get("exception", "Unknown failure"))
@@ -29,9 +30,7 @@ def load_config():
     with CONFIG_PATH.open("rb") as f:
         config = tomllib.load(f)
     logger.info(
-        "Loaded %d company configs from %s",
-        len(config.get("company", [])),
-        CONFIG_PATH
+        "Loaded %d company configs from %s", len(config.get("company", [])), CONFIG_PATH
     )
     return config
 
@@ -60,7 +59,7 @@ with DAG(
     catchup=False,
     tags=["cfs", "ingestion"],
 ) as dag:
-    
+
     @task
     def download_api(spec):
         """
@@ -90,8 +89,7 @@ with DAG(
             "end_date": spec["end_date"],
             "set_of_book_id": spec.get("book_id", ""),
         }
-        result = api_client.fetch_resource(spec["api_name"], json=data_post)
-        payload = result[spec["api_name"]]
+        payload = api_client.fetch_resource(spec["api_name"], json=data_post)
         year = spec["start_date"][:4]
         month = spec["start_date"][4:6]
         day = spec["start_date"][6:8]
@@ -126,8 +124,6 @@ with DAG(
             start_date = execution_date - timedelta(days=1)
             end_date = execution_date
 
-
-
         specs = []
 
         for company in companies:
@@ -136,7 +132,7 @@ with DAG(
             for api_name in company.get("cfs_apis", []):
                 current_date = start_date
                 while current_date <= end_date:
-                    current_date = current_date +  timedelta(days=1)
+                    current_date = current_date + timedelta(days=1)
                     specs.append(
                         {
                             "label": f"__{company_id}__{api_name}",
@@ -146,7 +142,9 @@ with DAG(
                             "username": company.get("username", ""),
                             "password": company.get("password", ""),
                             "book_id": company.get("book_id", ""),
-                            "start_date": datetime.strftime(current_date.replace(day=1), "%Y%m%d"),
+                            "start_date": datetime.strftime(
+                                current_date.replace(day=1), "%Y%m%d"
+                            ),
                             "end_date": datetime.strftime(current_date, "%Y%m%d"),
                         }
                     )
@@ -161,12 +159,13 @@ with DAG(
         hook = S3Hook(aws_conn_id=AWS_CONN_ID)
 
         try:
-            save_json_to_s3(hook, bucket=BUCKET_NAME, key=spec["key"], payload=spec["payload"])
+            save_json_to_s3(
+                hook, bucket=BUCKET_NAME, key=spec["key"], payload=spec["payload"]
+            )
             logger.info("Uploaded %s", spec["key"])
         except Exception as exc:
             logger.exception("Failed upload for %s", spec["key"])
             raise exc
-
 
     download_specs = build_download_specs()
     downloaded_results = download_api.expand(
