@@ -95,7 +95,7 @@ with DAG(
         day = spec["start_date"][6:8]
         ms = int(time.time_ns() / 1_000_000)
         prefix = (
-            f"bronze/{spec['company_id']}/cfs/incremental/"
+            f"vmic/data/bronze_zone/{spec['company_id']}/cfs/incremental/"
             f"event_dt={year}/{month}/{day}/load_ts={ms}"
         )
         return {
