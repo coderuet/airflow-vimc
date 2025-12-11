@@ -1,6 +1,12 @@
 import requests
 from requests.auth import HTTPBasicAuth
 from enum import Enum
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    retry_if_exception_type,
+)
 
 
 class AuthType(Enum):
@@ -59,9 +65,22 @@ class APIClient:
             return HTTPBasicAuth(self.username, self.password)
         return None
 
+    @retry(
+        stop=stop_after_attempt(3),  # 5 retries
+        wait=wait_exponential(multiplier=1, min=5, max=20),
+        retry=retry_if_exception_type(
+            (
+                requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout,
+                requests.exceptions.RequestException,
+            )
+        ),
+        reraise=True,
+    )
     def _request(self, method, endpoint, **kwargs):
         url = f"{self.base_url}/{endpoint.lstrip('/')}"
         headers = self._build_headers(kwargs.pop("headers", None))
+
         response = self.session.request(
             method=method,
             url=url,
