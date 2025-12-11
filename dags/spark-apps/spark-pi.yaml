@@ -1,0 +1,50 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: spark-pi
+  #namespace: default
+  namespace: vlp-tenantdvak01g-wsghwlhlt-ingestion
+spec:
+  type: Scala
+  mode: cluster
+  image: 192.168.74.14:80/vimc-vlp-project/spark:3.5.1-scala2.12-java11-v1.5.2
+  imagePullPolicy: IfNotPresent
+  mainClass: org.apache.spark.examples.SparkPi
+  mainApplicationFile: local:///opt/spark/examples/jars/spark-examples_2.12-3.5.1.jar
+  arguments:
+  - "5000"
+  sparkVersion: 3.5.1
+  driver:
+    labels:
+      version: 3.5.1
+    cores: 1
+    coreLimit: "1000m"
+    memory: "512m"
+    serviceAccount: spark-application-sa
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+      runAsGroup: 185
+      runAsUser: 185
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+  executor:
+    labels:
+      version: 3.5.1
+    instances: 1
+    cores: 1
+    coreLimit: "1000m"
+    memory: "512m"
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+      runAsGroup: 185
+      runAsUser: 185
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
