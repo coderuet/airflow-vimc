@@ -1,5 +1,4 @@
 import time
-import json
 from datetime import datetime, timedelta
 from pathlib import Path
 from apis.cfs import CfsAPI
@@ -12,6 +11,7 @@ from airflow.models import Variable
 
 from helpers.helper import send_error_to_discord
 from helpers.logger import get_logger
+from helpers.minio import save_json_to_s3
 
 logger = get_logger()
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "configs" / "cfs.toml"
@@ -35,16 +35,6 @@ def load_config():
     return config
 
 
-def save_json_to_s3(hook: S3Hook, bucket: str, key: str, payload: dict):
-    raw_bytes = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-    hook.load_bytes(
-        raw_bytes,
-        key=key,
-        bucket_name=bucket,
-        replace=True,
-    )
-
-
 with DAG(
     "cfs",
     default_args={
@@ -63,6 +53,7 @@ with DAG(
     @task
     def download_api(spec):
         """
+        Download data from a CFS API endpoint.
         spec = {
             "label": ...,
             "company_id": ...,
@@ -107,6 +98,11 @@ with DAG(
 
     @task
     def build_download_specs(**context):
+        """Build download specifications for CFS APIs.
+
+        Returns:
+            list: A list of download specifications.
+        """
         start_date_param = context["dag_run"].conf.get("start_date")
         end_date_param = context["dag_run"].conf.get("end_date")
         config = load_config()
@@ -117,6 +113,7 @@ with DAG(
         ds = context["ds"]  # execution date in "YYYY-MM-DD" format
         execution_date = datetime.strptime(ds, "%Y-%m-%d")
         # check if start_date_param and end_date_param are provided
+        # if have them, use them; otherwise, use execution_date -1 day to execution_date
         if start_date_param and end_date_param:
             start_date = datetime.strptime(start_date_param, "%Y%m%d")
             end_date = datetime.strptime(end_date_param, "%Y%m%d")
@@ -131,7 +128,7 @@ with DAG(
 
             for api_name in company.get("cfs_apis", []):
                 current_date = start_date
-                while current_date <= end_date:
+                while current_date < end_date:
                     current_date = current_date + timedelta(days=1)
                     specs.append(
                         {
@@ -154,6 +151,7 @@ with DAG(
     @task
     def upload_to_s3(spec):
         """
+        Upload payload to S3/MinIO.
         spec = { "company_id": ..., "key": ..., "payload": ... }
         """
         hook = S3Hook(aws_conn_id=AWS_CONN_ID)
