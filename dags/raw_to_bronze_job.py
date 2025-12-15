@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import timedelta, datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -5,7 +6,6 @@ from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKu
 from airflow.providers.cncf.kubernetes.sensors.spark_kubernetes import SparkKubernetesSensor
 from airflow.models import Variable
 from airflow.utils.dates import days_ago
-from __future__ import annotations
 from textwrap import dedent
 
 import datetime as dt
