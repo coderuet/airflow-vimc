@@ -7,7 +7,7 @@ metadata:
 spec:
   type: Scala
   mode: cluster
-  image: 192.168.74.14:80/vimc-vlp-project/spark:3.5.1-scala2.12-java11-v1.5.2
+  image: 192.168.74.14:80/vimc-vlp-project/spark:3.5.1-scala2.12-java11-v1.5.2.1
   imagePullPolicy: IfNotPresent
   mainClass: org.apache.spark.examples.SparkPi
   mainApplicationFile: local:///opt/spark/examples/jars/spark-examples_2.12-3.5.1.jar
