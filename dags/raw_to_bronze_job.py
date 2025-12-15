@@ -47,7 +47,7 @@ def _render_env_yaml(indent_spaces: int = 12) -> str:
     return "\n".join(env_lines)
 
 def _build_spark_application_yaml(job_suffix: str, main_class: str) -> tuple[str, str]:
-    app_name = f"poc-VIMC-spark-batch-{job_suffix}"
+    app_name = f"poc-vimc-spark-batch-{job_suffix}"
 
     pull_secret_block = ""
     if SPARK_IMAGE_PULL_SECRET:
