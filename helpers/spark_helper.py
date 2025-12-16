@@ -1,6 +1,8 @@
 from datetime import datetime
 from textwrap import dedent
 from airflow.models import Variable
+from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
+from airflow.providers.cncf.kubernetes.sensors.spark_kubernetes import SparkKubernetesSensor
 
 
 def _get_var(name: str, default: str) -> str:
@@ -104,6 +106,26 @@ def build_spark_application_yaml(
         """
     ).strip()
     return manifest, app_name
+
+def create_spark_k8s_operator(task_id, raw_batch_manifest):
+    return SparkKubernetesOperator(
+        task_id=task_id,
+        namespace=SPARK_NAMESPACE,
+        application_file=raw_batch_manifest,
+        kubernetes_conn_id=SPARK_K8S_CONN_ID,
+        do_xcom_push=False,
+    )
+
+def create_spark_k8s_sensor(task_id, raw_batch_app_name):
+    return SparkKubernetesSensor(
+        task_id=task_id,
+        namespace=SPARK_NAMESPACE,
+        application_name=raw_batch_app_name,
+        kubernetes_conn_id=SPARK_K8S_CONN_ID,
+        attach_log=True,
+        poke_interval=30,
+        timeout=180000,
+    )
 
 def generate_date_path_from_time(start_date : datetime, end_date : datetime):
     """Generate list of dates split by month between start_date and end_date.
