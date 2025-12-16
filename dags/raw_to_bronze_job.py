@@ -50,7 +50,7 @@ with DAG(
 ) as raw_zone_batch_dag:
     # Tạo cấu hình spark job format yaml
     raw_batch_manifest, raw_batch_app_name = build_spark_application_yaml(
-        job_suffix="raw-zone-batch",
+        job_suffix="dev-vimc-raw-zone-batch",
         main_class=SPARK_MAIN_CLASS,
         env_vars=ENV_VARS
     )

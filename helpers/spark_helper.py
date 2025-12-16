@@ -53,8 +53,8 @@ def build_spark_application_yaml(
         executor_core_limit: str = EXECUTOR_CORE_LIMIT,
         executor_memory: str = EXECUTOR_MEMORY,
         executor_memory_overhead: str = EXECUTOR_MEMORY_OVERHEAD,
-    ) -> tuple[str, str]:
-    app_name = f"poc-vimc-spark-batch-{job_suffix}"
+    ):
+    app_name = f"vimc-spark-batch-{job_suffix}"
 
     pull_secret_block = ""
     if spark_image_pull_secret:
