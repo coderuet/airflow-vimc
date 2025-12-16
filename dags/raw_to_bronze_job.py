@@ -2,12 +2,10 @@ from __future__ import annotations
 from datetime import timedelta, datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
-from airflow.providers.cncf.kubernetes.sensors.spark_kubernetes import SparkKubernetesSensor
 from airflow.models import Variable
 from airflow.utils.dates import days_ago
 from textwrap import dedent
-from helpers.spark_helper import render_env_yaml, build_spark_application_yaml
+from helpers.spark_helper import render_env_yaml, build_spark_application_yaml, create_spark_k8s_operator, create_spark_k8s_sensor
 
 import datetime as dt
 import pendulum
@@ -55,23 +53,9 @@ with DAG(
         env_vars=ENV_VARS
     )
 
-    raw_batch_submit = SparkKubernetesOperator(
-        task_id="submit_raw_zone_batch",
-        namespace=SPARK_NAMESPACE,
-        application_file=raw_batch_manifest,
-        kubernetes_conn_id=SPARK_K8S_CONN_ID,
-        do_xcom_push=False,
-    )
+    raw_batch_submit = create_spark_k8s_operator('submit_raw_zone_batch', raw_batch_manifest)
 
-    raw_batch_wait = SparkKubernetesSensor(
-        task_id="wait_raw_zone_batch",
-        namespace=SPARK_NAMESPACE,
-        application_name=raw_batch_app_name,
-        kubernetes_conn_id=SPARK_K8S_CONN_ID,
-        attach_log=True,
-        poke_interval=30,
-        timeout=180000,
-    )
+    raw_batch_wait = create_spark_k8s_sensor('wait_raw_zone_batch', raw_batch_app_name)
 
     start_batch_task = PythonOperator(
         task_id='startBatch',
