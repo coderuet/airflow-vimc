@@ -87,6 +87,13 @@ def build_spark_application_yaml(
             "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
             "spark.sql.adaptive.enabled": "true"
             "spark.sql.adaptive.coalescePartitions.enabled": "true"
+            "spark.eventLog.enabled": "true"
+            "spark.eventLog.dir": "s3a://vimc/vmic/spark_history"
+            "spark.hadoop.fs.s3a.endpoint": "http://192.168.74.16:30090"
+            "spark.hadoop.fs.s3a.path.style.access": "true"
+            "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+            "spark.hadoop.fs.s3a.connection.ssl.enabled": "false"
+            "spark.hadoop.fs.s3a.aws.credentials.provider": "com.amazonaws.auth.EnvironmentVariableCredentialsProvider"
           driver:
             serviceAccount: {spark_service_account}
             cores: {driver_cores}
@@ -94,6 +101,16 @@ def build_spark_application_yaml(
             memory: "{driver_memory}"
             memoryOverhead: "{driver_memory_overhead}"
             env:
+                - name: AWS_ACCESS_KEY_ID
+                    valueFrom:
+                    secretKeyRef:
+                        name: minio-creds
+                        key: access-key
+                - name: AWS_SECRET_ACCESS_KEY
+                    valueFrom:
+                    secretKeyRef:
+                        name: minio-creds
+                        key: secret-key
 {env_block}
           executor:
             cores: {executor_cores}

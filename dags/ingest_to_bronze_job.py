@@ -17,6 +17,7 @@ SPARK_MAIN_CLASS = "vn.viettel.ingestion.api.finance.CFS_PURCHASE"
 
 ENV_VARS = {
     "ENV_JOB_RUN": "dev"
+    
 }
 
 default_args = {
