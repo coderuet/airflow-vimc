@@ -24,16 +24,16 @@ SPARK_MAIN_JAR = _get_var("VIMC_SPARK_MAIN_JAR", "local:///opt/spark/jars/app.ja
 SPARK_SERVICE_ACCOUNT = _get_var("VIMC_SPARK_SA", "spark-application-sa")
 SPARK_VERSION = _get_var("VIMC_SPARK_VERSION", "3.5.1")
 
-DRIVER_CORES = _get_var("VIMC_DRIVER_CORES", "2")
-DRIVER_CORE_LIMIT = _get_var("VIMC_DRIVER_CORE_LIMIT", "2")
-DRIVER_MEMORY = _get_var("VIMC_DRIVER_MEMORY", "4g")
+DRIVER_CORES = _get_var("VIMC_DRIVER_CORES", "1")
+DRIVER_CORE_LIMIT = _get_var("VIMC_DRIVER_CORE_LIMIT", "1")
+DRIVER_MEMORY = _get_var("VIMC_DRIVER_MEMORY", "2g")
 DRIVER_MEMORY_OVERHEAD = _get_var("VIMC_DRIVER_MEMORY_OVERHEAD", "512m")
 
-EXECUTOR_CORES = _get_var("VIMC_EXECUTOR_CORES", "3")
-EXECUTOR_CORE_LIMIT = _get_var("VIMC_EXECUTOR_CORE_LIMIT", "3")
-EXECUTOR_MEMORY = _get_var("VIMC_EXECUTOR_MEMORY", "6g")
+EXECUTOR_CORES = _get_var("VIMC_EXECUTOR_CORES", "2")
+EXECUTOR_CORE_LIMIT = _get_var("VIMC_EXECUTOR_CORE_LIMIT", "2")
+EXECUTOR_MEMORY = _get_var("VIMC_EXECUTOR_MEMORY", "3g")
 EXECUTOR_MEMORY_OVERHEAD = _get_var("VIMC_EXECUTOR_MEMORY_OVERHEAD", "512m")
-EXECUTOR_INSTANCES = _get_var("VIMC_EXECUTOR_INSTANCES", "2")
+EXECUTOR_INSTANCES = _get_var("VIMC_EXECUTOR_INSTANCES", "1")
 
 ENV_VARS = {
     "ENV_JOB_RUN": "dev"
@@ -47,7 +47,8 @@ def _render_env_yaml(indent_spaces: int = 12) -> str:
     return "\n".join(env_lines)
 
 def _build_spark_application_yaml(job_suffix: str, main_class: str) -> tuple[str, str]:
-    app_name = f"poc-VIMC-spark-batch-{job_suffix}"
+    datestr = dt.datetime.now().strftime("%Y%m%d-%H%M")
+    app_name = f"VIMC-spark-test-ingestion-{job_suffix}-{datestr}"
 
     pull_secret_block = ""
     if SPARK_IMAGE_PULL_SECRET:
@@ -117,18 +118,18 @@ def done():
     print('##### done #####')
 
 with DAG(
-    dag_id="spark_batch_airflow",
+    dag_id="demo_ingestion_to_bronze_job",
     default_args=default_args,
     # schedule="0 2 * * *",
     start_date=pendulum.datetime(2025, 11, 24, tz='Asia/Ho_Chi_Minh'),
     catchup=False,
     max_active_runs=1,
-    tags=["spark", "k8s", "raw-zone", "bronze-zone", "batch"],
-    description="ETL Pipeline: Raw Zone -> Bronze Zone"
+    tags=["spark", "k8s", "api", "raw-zone", "bronze-zone", "batch"],
+    description="ETL Pipeline: API -> Bronze Zone"
 ) as raw_zone_batch_dag:
     raw_batch_manifest, raw_batch_app_name = _build_spark_application_yaml(
-        job_suffix="raw-zone-batch",
-        main_class="vn.viettel.vlp_load.BRONZE_ZONE",
+        job_suffix="bronze-zone-batch",
+        main_class="vn.viettel.ingestion.api.finance.CFS_PURCHASE",
     )
 
     raw_batch_submit = SparkKubernetesOperator(
