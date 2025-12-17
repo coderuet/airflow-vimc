@@ -30,8 +30,8 @@ default_args = {
     'retries': 0,
 }
 
-def startBatch():
-    print('##### startBatch #####')
+def startBatch(value):
+    print(f'##### {value} #####')
 
 def done():
     print('##### done #####')
@@ -63,7 +63,8 @@ with DAG(
 
     start_batch_task = PythonOperator(
         task_id='startBatch',
-        python_callable=startBatch
+        python_callable=startBatch,
+        params={"value": bronze_batch_manifest}
     )
     done_task = PythonOperator(
         task_id='done',
