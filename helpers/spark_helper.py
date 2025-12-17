@@ -101,16 +101,16 @@ def build_spark_application_yaml(
             memory: "{driver_memory}"
             memoryOverhead: "{driver_memory_overhead}"
             env:
-                - name: AWS_ACCESS_KEY_ID
-                    valueFrom:
-                    secretKeyRef:
-                        name: minio-creds
-                        key: access-key
-                - name: AWS_SECRET_ACCESS_KEY
-                    valueFrom:
-                    secretKeyRef:
-                        name: minio-creds
-                        key: secret-key
+              - name: AWS_ACCESS_KEY_ID
+                valueFrom:
+                secretKeyRef:
+                  name: minio-creds
+                  key: access-key
+              - name: AWS_SECRET_ACCESS_KEY
+                valueFrom:
+                secretKeyRef:
+                  name: minio-creds
+                  key: secret-key
 {env_block}
           executor:
             cores: {executor_cores}
