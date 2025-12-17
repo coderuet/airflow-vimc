@@ -64,7 +64,7 @@ with DAG(
     start_batch_task = PythonOperator(
         task_id='startBatch',
         python_callable=startBatch,
-        params={"value": bronze_batch_manifest}
+        op_kwargs={"value": bronze_batch_manifest}
     )
     done_task = PythonOperator(
         task_id='done',
