@@ -17,16 +17,16 @@ SPARK_MAIN_JAR = _get_var("VIMC_SPARK_MAIN_JAR", "local:///opt/spark/jars/app.ja
 SPARK_SERVICE_ACCOUNT = _get_var("VIMC_SPARK_SA", "spark-application-sa")
 SPARK_VERSION = _get_var("VIMC_SPARK_VERSION", "3.5.1")
 
-DRIVER_CORES = _get_var("VIMC_DRIVER_CORES", "2")
-DRIVER_CORE_LIMIT = _get_var("VIMC_DRIVER_CORE_LIMIT", "2")
+DRIVER_CORES = _get_var("VIMC_DRIVER_CORES", "1")
+DRIVER_CORE_LIMIT = _get_var("VIMC_DRIVER_CORE_LIMIT", "1")
 DRIVER_MEMORY = _get_var("VIMC_DRIVER_MEMORY", "4g")
 DRIVER_MEMORY_OVERHEAD = _get_var("VIMC_DRIVER_MEMORY_OVERHEAD", "512m")
 
-EXECUTOR_CORES = _get_var("VIMC_EXECUTOR_CORES", "3")
-EXECUTOR_CORE_LIMIT = _get_var("VIMC_EXECUTOR_CORE_LIMIT", "3")
-EXECUTOR_MEMORY = _get_var("VIMC_EXECUTOR_MEMORY", "6g")
+EXECUTOR_CORES = _get_var("VIMC_EXECUTOR_CORES", "1")
+EXECUTOR_CORE_LIMIT = _get_var("VIMC_EXECUTOR_CORE_LIMIT", "1")
+EXECUTOR_MEMORY = _get_var("VIMC_EXECUTOR_MEMORY", "4g")
 EXECUTOR_MEMORY_OVERHEAD = _get_var("VIMC_EXECUTOR_MEMORY_OVERHEAD", "512m")
-EXECUTOR_INSTANCES = _get_var("VIMC_EXECUTOR_INSTANCES", "2")
+EXECUTOR_INSTANCES = _get_var("VIMC_EXECUTOR_INSTANCES", "1")
 
 def render_env_yaml(indent_spaces: int = 12, env_vars: dict = {}) -> str:
     pad = " " * indent_spaces
@@ -121,14 +121,14 @@ def build_spark_application_yaml(
             env:
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
-              secretKeyRef:
-                name: minio-creds
-                key: access-key
+                secretKeyRef:
+                  name: minio-creds
+                  key: access-key
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
-              secretKeyRef:
-                name: minio-creds
-                key: secret-key
+                secretKeyRef:
+                  name: minio-creds
+                  key: secret-key
 {env_block}
         """
     ).strip()
