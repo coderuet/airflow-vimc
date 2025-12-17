@@ -122,6 +122,7 @@ def build_spark_application_yaml(
 {env_block}
         """
     ).strip()
+    print(manifest)
     return manifest, app_name
 
 def create_spark_k8s_operator(task_id, raw_batch_manifest):
