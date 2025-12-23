@@ -7,14 +7,33 @@ metadata:
 spec:
   type: Scala
   mode: cluster
-  image: 192.168.74.14:80/vimc-vlp-project/spark:3.5.1-scala2.12-java11-v1.5.2
+  image: 192.168.74.14:80/vimc-vlp-project/spark:3.5.1-scala2.12-java11-v1.5.2.1
   imagePullPolicy: IfNotPresent
   mainClass: org.apache.spark.examples.SparkPi
   mainApplicationFile: local:///opt/spark/examples/jars/spark-examples_2.12-3.5.1.jar
   arguments:
   - "5000"
   sparkVersion: 3.5.1
+  sparkConf:
+    "spark.eventLog.enabled": "true"
+    "spark.eventLog.dir": "s3a://vimc/vmic/spark_history"
+    "spark.hadoop.fs.s3a.endpoint": "http://192.168.74.16:30090"
+    "spark.hadoop.fs.s3a.path.style.access": "true"
+    "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+    "spark.hadoop.fs.s3a.connection.ssl.enabled": "false"
+    "spark.hadoop.fs.s3a.aws.credentials.provider": "com.amazonaws.auth.EnvironmentVariableCredentialsProvider"
   driver:
+    env:
+      - name: AWS_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: minio-creds
+            key: access-key
+      - name: AWS_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: minio-creds
+            key: secret-key
     labels:
       version: 3.5.1
     cores: 1
