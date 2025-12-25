@@ -2,39 +2,28 @@ from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 from airflow.utils.dates import days_ago
 
-# --- CẤU HÌNH ---
+# --- CẤU HÌNH CHUNG ---
 NAMESPACE = 'vlp-tenantdvak01g-wsghwlhlt-data'
-HARBOR_HOST = '192.168.74.14:80' # Thêm port 80 cho rõ ràng (tuỳ chọn)
-IMAGE_NAME = 'vimc-vlp-project/spark-ops' 
+HARBOR_HOST = '192.168.74.14:80'
+IMAGE_NAME = 'vimc-vlp-project/spark-ops'
+# Luôn lấy tag 'latest' để tự cập nhật code mới nhất từ CI/CD
+FULL_IMAGE = f"{HARBOR_HOST}/{IMAGE_NAME}:latest" 
 
-with DAG(
-    dag_id='CICD_spark_dag',
-    default_args={'owner': 'trungnp'},
-    schedule_interval=None, 
-    start_date=days_ago(1),
-    catchup=False,
-    tags=['spark', 'k8s', 'cicd'],
-) as dag:
-
-    spark_task = SparkKubernetesOperator(
-        task_id='submit_spark_job',
-        namespace=NAMESPACE,
-        application_file="""
+# --- HÀM HELPER: TẠO YAML CHO SPARK APP ---
+def get_spark_yaml(job_name, main_class, driver_mem="1024m", executor_mem="1024m"):
+    return f"""
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: "spark-app-{{ run_id | replace('_', '-') | lower | truncate(40, True, '') }}"
-  namespace: {{ params.namespace }}
+  name: "spark-{job_name}-{{{{ run_id | replace('_', '-') | lower | truncate(20, True, '') }}}}"
+  namespace: {NAMESPACE}
 spec:
   type: Scala
   mode: cluster
+  image: "{FULL_IMAGE}"
+  imagePullPolicy: Always  # BẮT BUỘC: Để Kubernetes luôn tải Image mới nhất
   
-  # Ghép chuỗi: 192.168.74.14:80/vimc-vlp-project/spark-ops:<tag_từ_gitlab>
-  image: "{{ params.harbor }}/{{ params.image_name }}:{{ dag_run.conf.get('image_tag', 'latest') }}"
-  
-  imagePullPolicy: Always
-  
-  mainClass: "{{ dag_run.conf.get('main_class', 'com.company.project.DataPipelineEntry') }}"
+  mainClass: "{main_class}"  
   mainApplicationFile: "local:///opt/spark/jars/app.jar"
   
   sparkVersion: "3.1.1"
@@ -46,7 +35,7 @@ spec:
   
   driver:
     cores: 1
-    memory: "1024m"
+    memory: "{driver_mem}"
     serviceAccount: spark-operator-sa
     labels:
       version: 3.1.1
@@ -54,14 +43,40 @@ spec:
   executor:
     instances: 1
     cores: 1
-    memory: "1024m"
+    memory: "{executor_mem}"
     labels:
       version: 3.1.1
-""",
-        # Truyền biến Python vào Template YAML
-        params={
-            'namespace': NAMESPACE,
-            'harbor': HARBOR_HOST,
-            'image_name': IMAGE_NAME
-        }
+"""
+
+# --- ĐỊNH NGHĨA DAG ---
+with DAG(
+    dag_id='daily_data_processing', 
+    default_args={'owner': 'trungnp'},
+    schedule_interval='@daily',      # Tự động chạy hàng ngày
+    start_date=days_ago(1),
+    catchup=False,
+    tags=['spark', 'production'],
+) as dag:
+
+    # --- JOB 1: Tính toán PI ---
+    task_pi = SparkKubernetesOperator(
+        task_id='run_pi_calculation',
+        namespace=NAMESPACE,
+        application_file=get_spark_yaml(
+            job_name="pi",
+            main_class="com.example.SparkPi" 
+        )
     )
+
+    # --- JOB 2: Work Count  ---
+    task_workcount = SparkKubernetesOperator(
+        task_id='run_work_count',
+        namespace=NAMESPACE,
+        application_file=get_spark_yaml(
+            job_name="clean",
+            main_class="com.example.WordCount",
+            driver_mem="2g"
+        )
+    )
+
+    task_pi >> task_workcount
