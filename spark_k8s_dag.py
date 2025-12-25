@@ -32,6 +32,7 @@ spec:
   
   imagePullSecrets:
     - "vlp-registry"
+  timeToLiveSeconds: 3600
   
   driver:
     cores: 1
