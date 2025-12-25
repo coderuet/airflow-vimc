@@ -8,7 +8,7 @@ HARBOR_HOST = '192.168.74.14:80' # Thêm port 80 cho rõ ràng (tuỳ chọn)
 IMAGE_NAME = 'vimc-vlp-project/spark-ops' 
 
 with DAG(
-    dag_id='my_spark_dag',
+    dag_id='CICD_spark_dag',
     default_args={'owner': 'trungnp'},
     schedule_interval=None, 
     start_date=days_ago(1),
