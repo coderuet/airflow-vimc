@@ -70,14 +70,14 @@ with DAG(
     )
 
     # --- JOB 2: Work Count  ---
-    task_newCI = SparkKubernetesOperator(
-        task_id='run_newCI',
+    task_newci = SparkKubernetesOperator(
+        task_id='run_newci',
         namespace=NAMESPACE,
         application_file=get_spark_yaml(
-            job_name="newCI",
+            job_name="newci",
             main_class="vn.viettel.code.ingestion.vimc.cfs.Purchase",
             driver_mem="2g"
         )
     )
 
-    task_pi >> task_newCI
+    task_pi >> task_newci
