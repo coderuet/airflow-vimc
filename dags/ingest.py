@@ -51,7 +51,7 @@ with DAG(
         job_suffix="dev-vimc-ingest-raw-zone-batch",
         main_class=SPARK_MAIN_CLASS,
         env_vars=ENV_VARS,
-        spark_image="thanh-spark-vimc-dev"
+        spark_image="192.168.74.14:80/vimc-vlp-project/thanh-spark-vimc-dev"
     )
 
     raw_batch_submit = create_spark_k8s_operator('submit_raw_zone_batch', ingest_raw_batch)
