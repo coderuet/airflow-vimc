@@ -17,7 +17,7 @@ import pendulum
 import logging
 
 
-SPARK_MAIN_CLASS = "vn.viettel.RAW_ZONE"
+SPARK_MAIN_CLASS = "vn.viettel.BRONZE_ZONE"
 
 ENV_VARS = {"ENV_JOB_RUN": "dev"}
 
@@ -42,29 +42,29 @@ def done():
 
 
 with DAG(
-    dag_id="spark_ingest_demo",
+    dag_id="spark_ingest_bronze_demo",
     default_args=default_args,
     # schedule="0 2 * * *",
     start_date=pendulum.datetime(2025, 11, 24, tz="Asia/Ho_Chi_Minh"),
     catchup=False,
     max_active_runs=1,
-    tags=["spark", "k8s", "raw-zone", "batch"],
-    description="ETL Pipeline: Ingest -> Raw Zone ",
-) as raw_zone_batch_dag:
+    tags=["spark", "k8s", "bronze-zone", "batch"],
+    description="ETL Pipeline: Ingest -> Bronze Zone ",
+) as bronze_zone_batch_dag:
     # Tạo cấu hình spark job format yaml
-    ingest_raw_batch, ingest_raw_batch_app_name = build_spark_application_yaml(
-        job_suffix="dev-vimc-ingest-raw-zone-batch",
+    ingest_bronze_batch, ingest_bronze_batch_app_name = build_spark_application_yaml(
+        job_suffix="dev-vimc-ingest-bronze-zone-batch",
         main_class=SPARK_MAIN_CLASS,
         env_vars=ENV_VARS,
         spark_image="192.168.74.14:80/vimc-vlp-project/thanh-spark-vimc-dev",
     )
 
     raw_batch_submit = create_spark_k8s_operator(
-        "submit_raw_zone_batch", ingest_raw_batch
+        "submit_raw_zone_batch", ingest_bronze_batch
     )
 
     raw_batch_wait = create_spark_k8s_sensor(
-        "wait_raw_zone_batch", ingest_raw_batch_app_name
+        "wait_raw_zone_batch", ingest_bronze_batch_app_name
     )
 
     start_batch_task = PythonOperator(task_id="startBatch", python_callable=startBatch)
