@@ -89,7 +89,7 @@ def build_spark_application_yaml(
             "spark.sql.adaptive.enabled": "true"
             "spark.sql.adaptive.coalescePartitions.enabled": "true"
             "spark.eventLog.enabled": "true"
-            "spark.eventLog.dir": "s3a://vimc/vmic/spark_history"
+            "spark.eventLog.dir": "s3a://vimc/vimc/spark_history"
             "spark.hadoop.fs.s3a.endpoint": "http://192.168.74.16:30090"
             "spark.hadoop.fs.s3a.path.style.access": "true"
             "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
