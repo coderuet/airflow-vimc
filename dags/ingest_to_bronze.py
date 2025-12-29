@@ -42,7 +42,7 @@ def done():
 
 
 with DAG(
-    dag_id="spark_ingest_demo",
+    dag_id="spark_ingest_bronze_demo",
     default_args=default_args,
     # schedule="0 2 * * *",
     start_date=pendulum.datetime(2025, 11, 24, tz="Asia/Ho_Chi_Minh"),
@@ -50,7 +50,7 @@ with DAG(
     max_active_runs=1,
     tags=["spark", "k8s", "bronze-zone", "batch"],
     description="ETL Pipeline: Ingest -> Bronze Zone ",
-) as raw_zone_batch_dag:
+) as bronze_zone_batch_dag:
     # Tạo cấu hình spark job format yaml
     ingest_bronze_batch, ingest_bronze_batch_app_name = build_spark_application_yaml(
         job_suffix="dev-vimc-ingest-bronze-zone-batch",
