@@ -52,11 +52,6 @@ with DAG(
         main_class=SPARK_MAIN_CLASS,
         env_vars=ENV_VARS
     )
-
-    print(bronze_batch_manifest)
-    print("-----")
-    print(bronze_batch_app_name)
-
     bronze_batch_submit = create_spark_k8s_operator('submit_bronze_zone_batch', bronze_batch_manifest)
 
     bronze_batch_wait = create_spark_k8s_sensor('wait_bronze_zone_batch', bronze_batch_app_name)

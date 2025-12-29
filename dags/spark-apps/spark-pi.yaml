@@ -7,7 +7,7 @@ metadata:
 spec:
   type: Scala
   mode: cluster
-  image: 192.168.74.14:80/vimc-vlp-project/spark:3.5.1-scala2.12-java11-v1.5.2.1
+  image: 192.168.74.14:80/vimc-vlp-project/spark:3.5.1-scala2.12-java11-v1.5.2-testdatahub
   imagePullPolicy: IfNotPresent
   mainClass: org.apache.spark.examples.SparkPi
   mainApplicationFile: local:///opt/spark/examples/jars/spark-examples_2.12-3.5.1.jar
@@ -22,6 +22,9 @@ spec:
     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
     "spark.hadoop.fs.s3a.connection.ssl.enabled": "false"
     "spark.hadoop.fs.s3a.aws.credentials.provider": "com.amazonaws.auth.EnvironmentVariableCredentialsProvider"
+    "spark.extraListeners": "datahub.spark.DatahubSparkListener"
+    "spark.datahub.rest.server": "http://192.168.74.16:31416/gms"
+    "spark.datahub.rest.token": "eyJhbGciOiJIUzI1NiJ9.eyJhY3RvclR5cGUiOiJVU0VSIiwiYWN0b3JJZCI6InRydW5nbnAiLCJ0eXBlIjoiUEVSU09OQUwiLCJ2ZXJzaW9uIjoiMiIsImp0aSI6IjA0YWIwZjRlLWM2MDUtNDE1Zi05MjM3LThiZDFhNzI0N2U5MCIsInN1YiI6InRydW5nbnAiLCJleHAiOjE3NjkzMjg1ODEsImlzcyI6ImRhdGFodWItbWV0YWRhdGEtc2VydmljZSJ9.37bpILd-UO-PjHIIuL4v2XC_HwBl-9p3HdSQbGpzjXE"
   driver:
     env:
       - name: AWS_ACCESS_KEY_ID
