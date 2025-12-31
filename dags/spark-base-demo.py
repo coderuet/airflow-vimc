@@ -45,84 +45,109 @@ def render_env_yaml(indent_spaces: int = 12, env_vars: dict = {}) -> str:
     return "\n".join(env_lines)
 
 
-pull_secret_block = ""
-if SPARK_IMAGE_PULL_SECRET:
-    pull_secret_block = f"imagePullSecrets:\n            - {SPARK_IMAGE_PULL_SECRET}"
+def build_spark_application_yaml(
+        job_suffix: str = 'spark_suffix',
+        main_class: str = 'vn.viettel.vlp_load.example',
+        env_vars: dict = {},
+        spark_image_pull_secret: str = SPARK_IMAGE_PULL_SECRET,
+        spark_namespace: str = SPARK_NAMESPACE,
+        spark_image: str = SPARK_IMAGE,
+        spark_image_pull_policy: str = SPARK_IMAGE_PULL_POLICY,
+        spark_main_jar: str = SPARK_MAIN_JAR,
+        spark_version: str = SPARK_VERSION,
+        spark_service_account: str = SPARK_SERVICE_ACCOUNT,
+        driver_cores: str = DRIVER_CORES,
+        driver_core_limit: str = DRIVER_CORE_LIMIT,
+        driver_memory: str = DRIVER_MEMORY,
+        driver_memory_overhead: str = DRIVER_MEMORY_OVERHEAD,
+        executor_cores: str = EXECUTOR_CORES,
+        executor_instances: str = EXECUTOR_INSTANCES,
+        executor_core_limit: str = EXECUTOR_CORE_LIMIT,
+        executor_memory: str = EXECUTOR_MEMORY,
+        executor_memory_overhead: str = EXECUTOR_MEMORY_OVERHEAD,
+    ):
+    rundate_str = datetime.now().strftime("%Y%m%d%H%M")
+    app_name = f"vimc-spark-batch-{job_suffix}-{rundate_str}"
 
-ENV_VARS = {"ENV_JOB_RUN": "dev"}
+    pull_secret_block = ""
+    if spark_image_pull_secret:
+        pull_secret_block = f"imagePullSecrets:\n            - {spark_image_pull_secret}"
 
-env_block = render_env_yaml(12, ENV_VARS)
+    env_block = render_env_yaml(12, env_vars)
 
-manifest = dedent(
-    f"""
-    apiVersion: "sparkoperator.k8s.io/v1beta2"
-    kind: SparkApplication
-    metadata:
-      name: spark-base-app
-      namespace: {SPARK_NAMESPACE}
-    spec:
-      type: Scala
-      mode: cluster
-      image: "{SPARK_IMAGE}"
-      imagePullPolicy: {SPARK_IMAGE_PULL_POLICY}
-      {pull_secret_block}
-      mainApplicationFile: s3://vimc/spark-artifacts/jobs/sparkscalavimc_2.12-0.1.0-SNAPSHOT.jar
-      mainClass: vn.viettel.code.ingestion.vimc.cfs.Purchase
-      sparkVersion: "{SPARK_VERSION}"
-      restartPolicy:
-        type: Never
-      sparkConf:
-        spark.jars: s3://vimc/spark-artifacts/libs/*.jar
-      sparkConf:
-        "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension"
-        "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
-        "spark.sql.adaptive.enabled": "true"
-        "spark.sql.adaptive.coalescePartitions.enabled": "true"
-        "spark.eventLog.enabled": "true"
-        "spark.eventLog.dir": "s3a://vimc/vmic/spark_history"
-        "spark.hadoop.fs.s3a.endpoint": "http://192.168.74.16:30090"
-        "spark.hadoop.fs.s3a.path.style.access": "true"
-        "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
-        "spark.hadoop.fs.s3a.connection.ssl.enabled": "false"
-        "spark.hadoop.fs.s3a.aws.credentials.provider": "com.amazonaws.auth.EnvironmentVariableCredentialsProvider"
-      driver:
-        serviceAccount: {SPARK_SERVICE_ACCOUNT}
-        cores: {DRIVER_CORES}
-        coreLimit: "{DRIVER_CORE_LIMIT}"
-        memory: "{DRIVER_MEMORY}"
-        memoryOverhead: "{DRIVER_MEMORY_OVERHEAD}"
-        env:
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-          secretKeyRef:
-            name: minio-creds
-            key: access-key
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-          secretKeyRef:
-            name: minio-creds
-            key: secret-key
-{env_block}
-      executor:
-        cores: {EXECUTOR_CORES}
-        instances: {EXECUTOR_INSTANCES}
-        coreLimit: "{EXECUTOR_CORE_LIMIT}"
-        memory: "{EXECUTOR_MEMORY}"
-        memoryOverhead: "{EXECUTOR_MEMORY_OVERHEAD}"
-        env:
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: minio-creds
-              key: access-key
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-creds
-              key: secret-key
-{env_block}
-    """
-).strip()
+    manifest = dedent(
+        f"""
+        apiVersion: "sparkoperator.k8s.io/v1beta2"
+        kind: SparkApplication
+        metadata:
+          name: spark-base-app
+          namespace: {SPARK_NAMESPACE}
+        spec:
+          type: Scala
+          mode: cluster
+          image: "{SPARK_IMAGE}"
+          imagePullPolicy: {SPARK_IMAGE_PULL_POLICY}
+          {pull_secret_block}
+          mainApplicationFile: s3://vimc/spark-artifacts/jobs/sparkscalavimc_2.12-0.1.0-SNAPSHOT.jar
+          mainClass: vn.viettel.code.ingestion.vimc.cfs.Purchase
+          sparkVersion: "{SPARK_VERSION}"
+          restartPolicy:
+            type: Never
+          sparkConf:
+            spark.jars: s3://vimc/spark-artifacts/libs/*.jar
+          sparkConf:
+            "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension"
+            "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
+            "spark.sql.adaptive.enabled": "true"
+            "spark.sql.adaptive.coalescePartitions.enabled": "true"
+            "spark.eventLog.enabled": "true"
+            "spark.eventLog.dir": "s3a://vimc/vmic/spark_history"
+            "spark.hadoop.fs.s3a.endpoint": "http://192.168.74.16:30090"
+            "spark.hadoop.fs.s3a.path.style.access": "true"
+            "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+            "spark.hadoop.fs.s3a.connection.ssl.enabled": "false"
+            "spark.hadoop.fs.s3a.aws.credentials.provider": "com.amazonaws.auth.EnvironmentVariableCredentialsProvider"
+          driver:
+            serviceAccount: {SPARK_SERVICE_ACCOUNT}
+            cores: {DRIVER_CORES}
+            coreLimit: "{DRIVER_CORE_LIMIT}"
+            memory: "{DRIVER_MEMORY}"
+            memoryOverhead: "{DRIVER_MEMORY_OVERHEAD}"
+            env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+              secretKeyRef:
+                name: minio-creds
+                key: access-key
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+              secretKeyRef:
+                name: minio-creds
+                key: secret-key
+    {env_block}
+          executor:
+            cores: {EXECUTOR_CORES}
+            instances: {EXECUTOR_INSTANCES}
+            coreLimit: "{EXECUTOR_CORE_LIMIT}"
+            memory: "{EXECUTOR_MEMORY}"
+            memoryOverhead: "{EXECUTOR_MEMORY_OVERHEAD}"
+            env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: minio-creds
+                  key: access-key
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-creds
+                  key: secret-key
+    {env_block}
+        """
+    ).strip()
+    print(manifest)
+    return manifest, app_name
+
 
 
 default_args = {
@@ -155,26 +180,24 @@ with DAG(
     tags=["spark", "k8s", "test"],
     description="ETL Pipeline: Ingest -> Bronze Zone ",
 ) as bronze_zone_batch_dag:
-    submit_spark = SparkKubernetesOperator(
-        task_id="spark_submit_task",
-        namespace=SPARK_NAMESPACE,
-        application_file=manifest,
-        kubernetes_conn_id=SPARK_K8S_CONN_ID,
-        do_xcom_push=False,
+    raw_batch_manifest, raw_batch_app_name = build_spark_application_yaml(
+        job_suffix="dev-vimc-raw-zone-batch",
+        main_class=SPARK_MAIN_CLASS,
+        env_vars=ENV_VARS
+    )
+
+    raw_batch_submit = create_spark_k8s_operator('submit_raw_zone_batch', raw_batch_manifest)
+
+    raw_batch_wait = create_spark_k8s_sensor('wait_raw_zone_batch', raw_batch_app_name)
+
+    start_batch_task = PythonOperator(
+        task_id='startBatch',
+        python_callable=startBatch
+    )
+    done_task = PythonOperator(
+        task_id='done',
+        python_callable=done
     )
 
 
-    raw_batch_wait = SparkKubernetesSensor(
-        task_id="sensor_task",
-        namespace=SPARK_NAMESPACE,
-        application_name="spark-base-app",
-        kubernetes_conn_id=SPARK_K8S_CONN_ID,
-        attach_log=True,
-        poke_interval=30,
-        timeout=180000,
-    )
-
-    start_batch_task = PythonOperator(task_id="startBatch", python_callable=startBatch)
-    done_task = PythonOperator(task_id="done", python_callable=done)
-
-    start_batch_task >> submit_spark >> raw_batch_wait >> done_task
+    start_batch_task >> raw_batch_submit >> raw_batch_wait >> done_task
