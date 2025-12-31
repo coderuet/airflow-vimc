@@ -37,9 +37,16 @@ EXECUTOR_MEMORY = _get_var("VIMC_EXECUTOR_MEMORY", "4g")
 EXECUTOR_MEMORY_OVERHEAD = _get_var("VIMC_EXECUTOR_MEMORY_OVERHEAD", "512m")
 EXECUTOR_INSTANCES = _get_var("VIMC_EXECUTOR_INSTANCES", "1")
 
+def render_env_yaml(indent_spaces: int = 12, env_vars: dict = {}) -> str:
+    pad = " " * indent_spaces
+    env_lines = []
+    for key, value in env_vars.items():
+        env_lines.append(f"{pad}- name: {key}\n{pad}  value: \"{value}\"")
+    return "\n".join(env_lines)
+
 
 pull_secret_block = ""
-if spark_image_pull_secret:
+if SPARK_IMAGE_PULL_SECRET:
     pull_secret_block = f"imagePullSecrets:\n            - {spark_image_pull_secret}"
 
 env_block = render_env_yaml(12, env_vars)
