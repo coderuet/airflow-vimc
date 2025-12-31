@@ -51,8 +51,9 @@ spark_yaml = {
         "timeToLiveSeconds": 3600,
         "restartPolicy": {"type": "Never"},
         "deps": {
-            "sparkConf":
+            "sparkConf": {
                 "spark.jars": "s3://vimc/spark-artifacts/libs/*.jar"
+            }
         }
     }
 }
