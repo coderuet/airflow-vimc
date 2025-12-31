@@ -57,8 +57,7 @@ def build_spark_application_yaml(
         executor_memory_overhead: str = EXECUTOR_MEMORY_OVERHEAD,
     ):
     rundate_str = datetime.now().strftime("%Y%m%d%H%M")
-    # app_name = f"vimc-spark-batch-{job_suffix}-{rundate_str}"
-    app_name = "spark-base-demo"
+    app_name = f"vimc-spark-base-{job_suffix}-{rundate_str}"
 
     pull_secret_block = ""
     if spark_image_pull_secret:
