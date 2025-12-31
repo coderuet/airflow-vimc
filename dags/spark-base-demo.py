@@ -169,6 +169,11 @@ def startBatch():
 def done():
     print("##### done #####")
 
+SPARK_MAIN_CLASS = "vn.viettel.code.ingestion.vimc.cfs.Purchase"
+
+ENV_VARS = {
+    "ENV_JOB_RUN": "dev"
+}
 
 with DAG(
     dag_id="spark_base_demo",
