@@ -88,7 +88,7 @@ with DAG(
     start_date=pendulum.datetime(2025, 11, 24, tz="Asia/Ho_Chi_Minh"),
     catchup=False,
     max_active_runs=1,
-    tags=["spark", "k8s", "bronze-zone", "batch"],
+    tags=["spark", "k8s", "test"],
     description="ETL Pipeline: Ingest -> Bronze Zone ",
 ) as bronze_zone_batch_dag:
     submit_spark = KubernetesManifestOperator(
