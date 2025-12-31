@@ -47,7 +47,7 @@ def render_env_yaml(indent_spaces: int = 12, env_vars: dict = {}) -> str:
 
 pull_secret_block = ""
 if SPARK_IMAGE_PULL_SECRET:
-    pull_secret_block = f"imagePullSecrets:\n            - {spark_image_pull_secret}"
+    pull_secret_block = f"imagePullSecrets:\n            - {SPARK_IMAGE_PULL_SECRET}"
 
 env_block = render_env_yaml(12, env_vars)
 
