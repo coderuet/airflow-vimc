@@ -49,8 +49,7 @@ spark_yaml = {
         "mainApplicationFile": "s3://vimc/spark-artifacts/jobs/sparkscalavimc_2.12-0.1.0-SNAPSHOT.jar",
         "sparkVersion": "3.5.1",
         "timeToLiveSeconds": 3600,
-        "restartPolicy":
-            "type": "Never"
+        "restartPolicy": {"type": "Never"},
         "deps": {
             "sparkConf":
                 "spark.jars": "s3://vimc/spark-artifacts/libs/*.jar"
