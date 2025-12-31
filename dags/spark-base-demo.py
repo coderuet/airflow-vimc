@@ -49,7 +49,9 @@ pull_secret_block = ""
 if SPARK_IMAGE_PULL_SECRET:
     pull_secret_block = f"imagePullSecrets:\n            - {SPARK_IMAGE_PULL_SECRET}"
 
-env_block = render_env_yaml(12, env_vars)
+ENV_VARS = {"ENV_JOB_RUN": "dev"}
+
+env_block = render_env_yaml(12, ENV_VARS)
 
 manifest = dedent(
     f"""
@@ -122,9 +124,6 @@ manifest = dedent(
     """
 ).strip()
 
-
-
-ENV_VARS = {"ENV_JOB_RUN": "dev"}
 
 default_args = {
     "owner": "airflow",
