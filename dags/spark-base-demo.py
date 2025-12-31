@@ -37,8 +37,6 @@ EXECUTOR_MEMORY = _get_var("VIMC_EXECUTOR_MEMORY", "4g")
 EXECUTOR_MEMORY_OVERHEAD = _get_var("VIMC_EXECUTOR_MEMORY_OVERHEAD", "512m")
 EXECUTOR_INSTANCES = _get_var("VIMC_EXECUTOR_INSTANCES", "1")
 
-rundate_str = datetime.now().strftime("%Y%m%d%H%M")
-app_name = f"vimc-spark-batch-{job_suffix}-{rundate_str}"
 
 pull_secret_block = ""
 if spark_image_pull_secret:
