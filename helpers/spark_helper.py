@@ -10,10 +10,10 @@ def _get_var(name: str, default: str) -> str:
 
 SPARK_NAMESPACE = _get_var("VIMC_SPARK_NAMESPACE", "vlp-tenantdvak01g-wsghwlhlt-ingestion")
 SPARK_K8S_CONN_ID = _get_var("VIMC_K8S_CONN_ID", "kubernetes_default")
-SPARK_IMAGE = _get_var("VIMC_SPARK_IMAGE", "192.168.74.14:80/vimc-vlp-project/spark:3.5.1-scala2.12-java11-v1.5.2.1")
+SPARK_IMAGE = _get_var("VIMC_SPARK_IMAGE", "192.168.74.14:80/vimc-vlp-project/spark-base:1.0")
 SPARK_IMAGE_PULL_POLICY = _get_var("VIMC_SPARK_IMAGE_PULL_POLICY", "Always")
 SPARK_IMAGE_PULL_SECRET = _get_var("VIMC_SPARK_IMAGE_PULL_SECRET", "vlp-registry")
-SPARK_MAIN_JAR = _get_var("VIMC_SPARK_MAIN_JAR", "local:///opt/spark/jars/app.jar")
+SPARK_MAIN_JAR = _get_var("VIMC_SPARK_MAIN_JAR", "s3://vimc/spark-artifacts/jobs/sparkscalavimc_2.12-0.1.0-SNAPSHOT.jar")
 SPARK_SERVICE_ACCOUNT = _get_var("VIMC_SPARK_SA", "spark-application-sa")
 SPARK_VERSION = _get_var("VIMC_SPARK_VERSION", "3.5.1")
 
@@ -57,7 +57,8 @@ def build_spark_application_yaml(
         executor_memory_overhead: str = EXECUTOR_MEMORY_OVERHEAD,
     ):
     rundate_str = datetime.now().strftime("%Y%m%d%H%M")
-    app_name = f"vimc-spark-batch-{job_suffix}-{rundate_str}"
+    # app_name = f"vimc-spark-batch-{job_suffix}-{rundate_str}"
+    app_name = "spark-base-demo"
 
     pull_secret_block = ""
     if spark_image_pull_secret:
@@ -84,6 +85,7 @@ def build_spark_application_yaml(
           restartPolicy:
             type: Never
           sparkConf:
+            "spark.jars": "s3://vimc/spark-artifacts/libs/*.jar"
             "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension"
             "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
             "spark.sql.adaptive.enabled": "true"
