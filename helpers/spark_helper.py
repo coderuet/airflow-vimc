@@ -96,6 +96,8 @@ def build_spark_application_yaml(
             "spark.hadoop.fs.s3a.endpoint": "http://192.168.74.16:30090"
             "spark.hadoop.fs.s3a.path.style.access": "true"
             "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+            "spark.hadoop.fs.s3.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+            "spark.hadoop.fs.AbstractFileSystem.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
             "spark.hadoop.fs.s3a.connection.ssl.enabled": "false"
             "spark.hadoop.fs.s3a.aws.credentials.provider": "com.amazonaws.auth.EnvironmentVariableCredentialsProvider"
           driver:
