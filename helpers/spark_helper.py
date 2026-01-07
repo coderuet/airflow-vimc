@@ -84,8 +84,8 @@ def build_spark_application_yaml(
           restartPolicy:
             type: Never
           sparkConf:
-            "spark.driver.extraClassPath": "/opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar"
-            "spark.executor.extraClassPath": "/opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar"
+            "spark.driver.extraClassPath": "/opt/spark/jars/hadoop-aws-3.1.1.jar:/opt/spark/jars/aws-java-sdk-bundle-1.11.375.jar"
+            "spark.executor.extraClassPath": "/opt/spark/jars/hadoop-aws-3.1.1.jar:/opt/spark/jars/aws-java-sdk-bundle-1.11.375.jar"
             "spark.jars": "s3a://vimc/spark-artifacts/libs/*.jar"
             "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension"
             "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
