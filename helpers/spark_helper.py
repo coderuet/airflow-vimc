@@ -86,7 +86,7 @@ def build_spark_application_yaml(
           sparkConf:
             "spark.driver.extraClassPath": "/opt/spark/jars/hadoop-aws-3.2.0.jar:/opt/spark/jars/aws-java-sdk-bundle-1.11.375.jar"
             "spark.executor.extraClassPath": "/opt/spark/jars/hadoop-aws-3.2.0.jar:/opt/spark/jars/aws-java-sdk-bundle-1.11.375.jar"
-            "spark.jars": "s3a://vimc/spark-artifacts/libs/*.jar"
+            "spark.jars": "s3a://vimc/spark-artifacts/libs/mariadb-java-client-3.3.2.jar"
             "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension"
             "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
             "spark.sql.adaptive.enabled": "true"
