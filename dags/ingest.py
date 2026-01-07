@@ -55,7 +55,7 @@ def build_spark_config(**context):
         arguments = [
             context["dag"].dag_id,
             context["run_id"],
-            "REPROCESS",
+            "BACKFILL",
             start_date,
             end_date,
         ]
