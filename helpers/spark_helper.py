@@ -39,6 +39,7 @@ def build_spark_application_yaml(
         job_suffix: str = 'spark_suffix',
         main_class: str = 'vn.viettel.vlp_load.example',
         env_vars: dict = {},
+        arguments: list = None,
         spark_image_pull_secret: str = SPARK_IMAGE_PULL_SECRET,
         spark_namespace: str = SPARK_NAMESPACE,
         spark_image: str = SPARK_IMAGE,
@@ -65,6 +66,12 @@ def build_spark_application_yaml(
 
     env_block = render_env_yaml(12, env_vars)
 
+    # Build arguments block
+    arguments_block = ""
+    if arguments:
+        args_lines = "\n".join([f"            - \"{arg}\"" for arg in arguments])
+        arguments_block = f"arguments:\n{args_lines}"
+
     manifest = dedent(
         f"""
         apiVersion: "sparkoperator.k8s.io/v1beta2"
@@ -81,6 +88,7 @@ def build_spark_application_yaml(
           mainApplicationFile: {spark_main_jar}
           mainClass: {main_class}
           sparkVersion: "{spark_version}"
+          {arguments_block}
           restartPolicy:
             type: Never
           sparkConf:
