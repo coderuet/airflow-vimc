@@ -13,10 +13,16 @@ import logging
 
 
 
-SPARK_MAIN_CLASS = "vn.viettel.ingestion.api.finance.CFS_PURCHASE"
+SPARK_MAIN_CLASS = "vn.viettel.ingestion.full_load.api.finance.CFS_PURCHASE_FULL_LOAD"
 
 ENV_VARS = {
-    "ENV_JOB_RUN": "dev"
+    "ENV_JOB_RUN": "dev",
+    "TABLE_NAME": "CFS_PURCHASE",
+    "PARTITION_COLUMN": "INVOICE_DATE",
+    "SCHEMA_KEY": "CFS_PURCHASE",
+    "RUN_TYPE": "full",
+    "BATCH_START_DATE": "2025-11-01",
+    "BATCH_END_DATE": "2025-12-31"
 }
 
 default_args = {
