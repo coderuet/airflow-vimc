@@ -42,7 +42,7 @@ def done():
 
 
 with DAG(
-    dag_id="spark_ingest_demo",
+    dag_id="cfs_ingest_demo",
     default_args=default_args,
     # schedule="0 2 * * *",
     start_date=pendulum.datetime(2025, 11, 24, tz="Asia/Ho_Chi_Minh"),
