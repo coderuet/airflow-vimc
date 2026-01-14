@@ -6,7 +6,7 @@ default_args = {
 'start_date': datetime(2024, 1, 1), 
 } 
 with DAG( 
- dag_id='vimc_load_data_to_gold_layer', 
+ dag_id='vimc_load_crm_to_bronze_layer', 
     default_args=default_args, 
     schedule_interval='@daily', 
     catchup=False 
