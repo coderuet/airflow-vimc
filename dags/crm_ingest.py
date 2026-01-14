@@ -16,8 +16,8 @@ with DAG(
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials 
     raw_manifest, app_name = build_spark_application_yaml( 
         job_suffix='ingest-to-bronze', 
-        main_class='vn.viettel.vlp_load.ingestion.cdc.CRM.CRM_INGESTION_CDC', 
-        spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/thiennt/ingest_crm/spark-ops-thiennt/ingest_crm-latest.jar', 
+        main_class='vn.viettel.vlp_load.ingestion.daily_load.db.crm.CRM_INGESTION_CDC', 
+        spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/dev/spark-ops-dev-latest.jar', 
         arguments=[], 
         executor_instances="2", # Tùy chỉnh số lượng executor nếu cần 
         executor_memory="2g" 
