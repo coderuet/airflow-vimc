@@ -1,6 +1,6 @@
 from airflow import DAG 
 from datetime import datetime 
-from spark_helper import build_spark_application_yaml, create_spark_k8s_operator, create_spark_k8s_sensor 
+from helpers.spark_helper import build_spark_application_yaml, create_spark_k8s_operator, create_spark_k8s_sensor 
 default_args = { 
 'owner': 'vimc_dev', 
 'start_date': datetime(2024, 1, 1), 
