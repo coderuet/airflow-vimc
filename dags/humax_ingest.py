@@ -17,7 +17,7 @@ with DAG(
     raw_manifest, app_name = build_spark_application_yaml( 
         job_suffix='ingest-to-bronze', 
         main_class='vn.viettel.vlp_load.ingestion.daily_load.db.humax.HR_SQLSERVER_INGESTION', 
-        spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/thiennt/spark-ops-latest.jar', 
+        spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/thiennt/ingest_crm_v2/spark-ops-latest.jar', 
         arguments=[], 
         executor_instances="2", # Tùy chỉnh số lượng executor nếu cần 
         executor_memory="2g" 
