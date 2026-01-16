@@ -94,8 +94,6 @@ def build_spark_application_yaml(
           sparkConf:
             "spark.driver.extraClassPath": "/opt/spark/jars/hadoop-aws-3.2.0.jar:/opt/spark/jars/aws-java-sdk-bundle-1.11.375.jar"
             "spark.executor.extraClassPath": "/opt/spark/jars/hadoop-aws-3.2.0.jar:/opt/spark/jars/aws-java-sdk-bundle-1.11.375.jar"
-            "spark.driver.extraJavaOptions": "-Duser.name=spark -Dhadoop.user.name=spark -verbose:class"
-            "spark.executor.extraJavaOptions": "-Duser.name=spark -Dhadoop.user.name=spark -verbose:class"
             "spark.jars": "s3a://vimc/vimc/spark-artifacts/libs/*.jar"
             "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension"
             "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
