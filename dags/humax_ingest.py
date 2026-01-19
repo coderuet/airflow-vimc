@@ -6,7 +6,7 @@ default_args = {
 'start_date': datetime(2024, 1, 1), 
 } 
 with DAG( 
- dag_id='vimc_load_humax_to_bronze_layer', 
+ dag_id='humax_ingest', 
     default_args=default_args, 
     schedule_interval='@daily', 
     catchup=False 
@@ -16,7 +16,7 @@ with DAG(
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials 
     raw_manifest, app_name = build_spark_application_yaml( 
         job_suffix='ingest-to-bronze', 
-        main_class='vn.viettel.vlp_load.ingestion.daily_load.db.humax.HR_SQLSERVER_INGESTION', 
+        main_class='vn.viettel.vlp_load.ingestion.daily_load.db.humax.HUMAX', 
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/thiennt/ingest_crm_v2/spark-ops-latest.jar', 
         arguments=[], 
         executor_instances="2", # Tùy chỉnh số lượng executor nếu cần 
