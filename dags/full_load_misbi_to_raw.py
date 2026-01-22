@@ -20,7 +20,7 @@ with DAG(
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials
     raw_manifest, app_name = build_spark_application_yaml(
         job_suffix='ingest-full-load-misbi-to-raw',
-        main_class='vn.viettel.vlp_load.ingestion.full_load.file.sharepoint.SharePoint',
+        main_class='vn.viettel.vlp_load.ingestion.full_load.file.sharepoint',
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/thiennt/ingest_crm_v2/spark-ops-latest.jar',
         arguments=[],
         executor_instances="2",  # Tùy chỉnh số lượng executor nếu cần
