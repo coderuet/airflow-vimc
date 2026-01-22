@@ -20,7 +20,7 @@ with DAG(
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials
     raw_manifest, app_name = build_spark_application_yaml(
         job_suffix='daily_ingest-humax-to-bronze',
-        main_class='vn.viettel.vlp_load.ingestion.daily_load.db.humax',
+        main_class='vn.viettel.vlp_load.ingestion.daily_load.db.humax.Humax',
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/thiennt/ingest_crm_v2/spark-ops-latest.jar',
         arguments=[],
         executor_instances="2",  # Tùy chỉnh số lượng executor nếu cần
