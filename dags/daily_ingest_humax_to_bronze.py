@@ -41,10 +41,10 @@ def _build_manifest_file(job_suffix: str, main_class: str, spark_main_jar: str, 
         executor_instances="2",
         executor_memory="2g",
     )
-
-    out_path = Path(f"/tmp/{app_name}.yaml")
-    out_path.write_text(manifest)
-    return str(out_path)
+    ti = kwargs.get('ti')
+    if ti:
+        ti.xcom_push(key='app_name', value=app_name)
+    return manifest
 
 
 with DAG(
@@ -72,7 +72,7 @@ with DAG(
 
     wait_for_job = create_spark_k8s_sensor(
         task_id='wait_for_spark_job',
-        raw_batch_app_name="{{ ti.xcom_pull(task_ids='build_manifest') | replace('/tmp/','') | replace('.yaml','') }}",
+        raw_batch_app_name="{{ ti.xcom_pull(task_ids='build_manifest', key='app_name') }}",
     )
 
     build_manifest >> submit_job >> wait_for_job
