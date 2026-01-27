@@ -3,11 +3,13 @@ from datetime import datetime
 from pathlib import Path
 
 from airflow.operators.python import PythonOperator
+from airflow.operators.python import get_current_context
 
 from helpers.spark_helper import build_spark_application_yaml, create_spark_k8s_operator, create_spark_k8s_sensor
 
 default_args = {
     'owner': 'vimc_dev',
+    'start_date': datetime(2024, 1, 1),
 }
 
 
@@ -15,10 +17,14 @@ def _build_manifest_file(job_suffix: str, main_class: str, spark_main_jar: str, 
     """Build manifest at runtime using dag_run.conf for parameters and write to a temp file.
 
     Returns path to the manifest file (string)."""
-    dag_run = kwargs.get('dag_run')
     conf = {}
-    if dag_run and getattr(dag_run, 'conf', None):
-        conf = dag_run.conf
+    try:
+        context = get_current_context()
+        dag_run = context.get('dag_run')
+        if dag_run and getattr(dag_run, 'conf', None):
+            conf = dag_run.conf
+    except Exception:
+        conf = {}
 
     runtime_start = conf.get('start_date') if conf else None
 
@@ -68,7 +74,7 @@ with DAG(
 
     wait_for_job = create_spark_k8s_sensor(
         task_id='wait_for_spark_job',
-        raw_batch_app_name="{{ ti.xcom_pull(task_ids='build_manifest') | regex_replace('/tmp/(.*)\\.yaml', '\\1') }}",
+        raw_batch_app_name="{{ ti.xcom_pull(task_ids='build_manifest') | replace('/tmp/','') | replace('.yaml','') }}",
     )
 
     build_manifest >> submit_job >> wait_for_job
