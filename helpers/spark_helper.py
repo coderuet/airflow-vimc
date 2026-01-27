@@ -125,6 +125,11 @@ def build_spark_application_yaml(
                 secretKeyRef:
                   name: minio-creds
                   key: secret-key
+            - name: OMD_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: omd-jwt-key
+                  key: jwt-token
 {env_block}
           executor:
             cores: {executor_cores}
@@ -143,6 +148,11 @@ def build_spark_application_yaml(
                 secretKeyRef:
                   name: minio-creds
                   key: secret-key
+            - name: OMD_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: omd-jwt-key
+                  key: jwt-token
 {env_block}
         """
     ).strip()
