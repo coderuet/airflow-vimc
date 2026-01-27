@@ -1,12 +1,44 @@
 from airflow import DAG
 from datetime import datetime
+from pathlib import Path
+
+from airflow.operators.python import PythonOperator
 
 from helpers.spark_helper import build_spark_application_yaml, create_spark_k8s_operator, create_spark_k8s_sensor
 
 default_args = {
     'owner': 'vimc_dev',
-    'start_date': datetime(2024, 1, 1),
 }
+
+
+def _build_manifest_file(job_suffix: str, main_class: str, spark_main_jar: str, **kwargs) -> str:
+    dag_run = kwargs.get('dag_run')
+    conf = {}
+    if dag_run and getattr(dag_run, 'conf', None):
+        conf = dag_run.conf
+
+    runtime_start = conf.get('start_date') if conf else None
+
+    env_vars = {}
+    args = []
+    if runtime_start:
+        env_vars['PROCESS_START_DATE'] = runtime_start
+        args.append(runtime_start)
+
+    manifest, app_name = build_spark_application_yaml(
+        job_suffix=job_suffix,
+        main_class=main_class,
+        spark_main_jar=spark_main_jar,
+        arguments=args,
+        env_vars=env_vars,
+        executor_instances="2",
+        executor_memory="2g",
+    )
+
+    out_path = Path(f"/tmp/{app_name}.yaml")
+    out_path.write_text(manifest)
+    return str(out_path)
+
 
 with DAG(
     dag_id='daily_ingest_humax_to_bronze',
@@ -16,27 +48,24 @@ with DAG(
     tags=['daily', 'ingest', 'humax']
 ) as dag:
 
-    # 1. Định nghĩa Manifest cho Spark Job
-    # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials
-    raw_manifest, app_name = build_spark_application_yaml(
-        job_suffix='daily_ingest-humax-to-bronze',
-        main_class='vn.viettel.vlp_load.ingestion.daily_load.db.humax.Humax',
-        spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/thiennt/ingest_crm_v2/spark-ops-latest.jar',
-        arguments=[],
-        executor_instances="2",  # Tùy chỉnh số lượng executor nếu cần
-        executor_memory="2g"
+    build_manifest = PythonOperator(
+        task_id='build_manifest',
+        python_callable=_build_manifest_file,
+        op_kwargs={
+            'job_suffix': 'daily_ingest-humax-to-bronze',
+            'main_class': 'vn.viettel.vlp_load.ingestion.daily_load.db.humax.Humax',
+            'spark_main_jar': 's3a://vimc/vimc/spark-artifacts/jobs/thiennt/ingest_crm_v2/spark-ops-latest.jar',
+        },
     )
 
-    # 2. Tạo Task Submit
     submit_job = create_spark_k8s_operator(
         task_id='submit_spark_job',
-        raw_batch_manifest=raw_manifest
+        raw_batch_manifest="{{ ti.xcom_pull(task_ids='build_manifest') }}",
     )
 
-    # 3. Tạo Task Sensor (Để theo dõi log và trạng thái Job)
     wait_for_job = create_spark_k8s_sensor(
         task_id='wait_for_spark_job',
-        raw_batch_app_name=app_name
+        raw_batch_app_name="{{ ti.xcom_pull(task_ids='build_manifest') | regex_replace('/tmp/(.*)\\.yaml', '\\1') }}",
     )
 
-    submit_job >> wait_for_job
+    build_manifest >> submit_job >> wait_for_job

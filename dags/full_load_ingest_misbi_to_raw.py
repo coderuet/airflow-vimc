@@ -12,6 +12,9 @@ default_args = {
 
 
 def _build_manifest_file(job_suffix: str, main_class: str, spark_main_jar: str, **kwargs) -> str:
+    """Build manifest at runtime using dag_run.conf for parameters and write to a temp file.
+
+    Returns path to the manifest file (string)."""
     dag_run = kwargs.get('dag_run')
     conf = {}
     if dag_run and getattr(dag_run, 'conf', None):
@@ -41,25 +44,23 @@ def _build_manifest_file(job_suffix: str, main_class: str, spark_main_jar: str, 
 
 
 with DAG(
-    dag_id='daily_ingest_crm_to_bronze',
+    dag_id='full_load_ingest_misbi_to_raw',
     default_args=default_args,
     schedule_interval='@daily',
     catchup=False,
-    tags=['daily', 'ingest', 'crm']
+    tags=['full_load', 'ingest', 'misbi']
 ) as dag:
 
-    # Build manifest at runtime so we can read dag_run.conf parameters (eg. start_date)
     build_manifest = PythonOperator(
         task_id='build_manifest',
         python_callable=_build_manifest_file,
         op_kwargs={
-            'job_suffix': 'daily_ingest-crm-to-bronze',
-            'main_class': 'vn.viettel.vlp_load.ingestion.daily_load.db.crm.Crm',
+            'job_suffix': 'ingest-full-load-misbi-to-raw',
+            'main_class': 'vn.viettel.vlp_load.ingestion.full_load.file.sharepoint.SharePoint',
             'spark_main_jar': 's3a://vimc/vimc/spark-artifacts/jobs/thiennt/ingest_crm_v2/spark-ops-latest.jar',
         },
     )
 
-    # Submit job: application_file is templated to read XCom from build_manifest
     submit_job = create_spark_k8s_operator(
         task_id='submit_spark_job',
         raw_batch_manifest="{{ ti.xcom_pull(task_ids='build_manifest') }}",
