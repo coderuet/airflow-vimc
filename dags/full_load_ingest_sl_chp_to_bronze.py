@@ -9,7 +9,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id='full_ingest_sl_to_bronze',
+    dag_id='full_load_ingest_sl_chp_to_bronze',
     default_args=default_args,
     schedule_interval='@daily',
     catchup=False,
