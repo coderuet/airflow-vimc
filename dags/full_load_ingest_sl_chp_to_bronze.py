@@ -1,7 +1,27 @@
 from airflow import DAG
 from datetime import datetime
+from airflow.model import Variable
 
 from helpers.spark_helper import build_spark_application_yaml, create_spark_k8s_operator, create_spark_k8s_sensor
+
+# Airflow Variables
+ENV_VARS:dict[str:str] = {"ENV_JOB_RUN": "dev",
+                          "MINIO_ENDPOINT": Variable.get("MINIO_ENDPOINT"),
+                          "MINIO_BUCKET": Variable.get("MINIO_BUCKET"),
+                          "MINIO_ACCESS_KEY": Variable.get("MINIO_ACCESS_KEY"),
+                          "MINIO_SECRET_KEY": Variable.get("MINIO_SECRET_KEY"),
+                          "MINIO_PATH_STYLE_ACCESS": Variable.get("MINIO_PATH_STYLE_ACCESS"),
+                          "BATCH_START_DATE": Variable.get("BATCH_START_DATE"),
+                            "BATCH_END_DATE": Variable.get("BATCH_END_DATE"),
+                          "DEFAULT_START_DATE": Variable.get("DEFAULT_START_DATE"),
+                          "CHP_API_ENDPOINT": Variable.get("CHP_API_ENDPOINT"),
+                          "CHP_API_USERNAME": Variable.get("CHP_API_USERNAME"),
+                          "CHP_API_PASSWORD": Variable.get("CHP_API_PASSWORD"),
+                          "CHP_API_KEY": Variable.get("CHP_API_KEY"),
+                          "RUN_TYPE": Variable.get("RUN_TYPE"),
+                          "SPARK_APP_NAME": Variable.get("SPARK_APP_NAME"),
+                          "HIVE_METASTORE_URI": Variable.get("HIVE_METASTORE_URI")
+                          }
 
 default_args = {
     'owner': 'vimc_dev',
@@ -21,6 +41,7 @@ with DAG(
     raw_manifest, app_name = build_spark_application_yaml(
         job_suffix='full-ingest-sl-to-bronze',
         main_class='vn.viettel.vlp_load.ingestion.Ingest',
+        env_vars=ENV_VARS,
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/minhnvq/dev-chp/spark-ops-latest.jar',
         arguments=[],
         executor_instances="2",  # Tùy chỉnh số lượng executor nếu cần
