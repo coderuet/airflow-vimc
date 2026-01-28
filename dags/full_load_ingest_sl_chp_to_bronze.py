@@ -40,4 +40,3 @@ with DAG(
     )
 
     submit_job >> wait_for_job
-)
