@@ -5,7 +5,7 @@ from airflow.models import Variable
 from helpers.spark_helper import build_spark_application_yaml, create_spark_k8s_operator, create_spark_k8s_sensor
 
 # Airflow Variables
-ENV_VARS:dict[str:str] = {"ENV_JOB_RUN": "dev",
+ENV_VARS:dict[str, str] = {"ENV_JOB_RUN": "dev",
                           "MINIO_ENDPOINT": Variable.get("MINIO_ENDPOINT"),
                           "MINIO_BUCKET": Variable.get("MINIO_BUCKET"),
                           "MINIO_ACCESS_KEY": Variable.get("MINIO_ACCESS_KEY"),
