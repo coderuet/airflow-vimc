@@ -3,13 +3,32 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime
 import logging
 
+from airflow.models import Variable
 from helpers.spark_helper import build_spark_application_yaml
-from full_load_ingest_sl_chp_to_bronze import ENV_VARS
 
 
 default_args = {
     "owner": "vimc_dev",
     "start_date": datetime(2024, 1, 1),
+}
+
+ENV_VARS = {
+    "ENV_JOB_RUN": "dev",
+    "MINIO_ENDPOINT": Variable.get("MINIO_ENDPOINT"),
+    "MINIO_BUCKET": Variable.get("MINIO_BUCKET"),
+    "MINIO_ACCESS_KEY": Variable.get("MINIO_ACCESS_KEY"),
+    "MINIO_SECRET_KEY": Variable.get("MINIO_SECRET_KEY"),
+    "MINIO_PATH_STYLE_ACCESS": Variable.get("MINIO_PATH_STYLE_ACCESS"),
+    "BATCH_START_DATE": Variable.get("BATCH_START_DATE"),
+    "BATCH_END_DATE": Variable.get("BATCH_END_DATE"),
+    "DEFAULT_START_DATE": Variable.get("DEFAULT_START_DATE"),
+    "CHP_API_ENDPOINT": Variable.get("CHP_API_ENDPOINT"),
+    "CHP_API_USERNAME": Variable.get("CHP_API_USERNAME"),
+    "CHP_API_PASSWORD": Variable.get("CHP_API_PASSWORD"),
+    "CHP_API_KEY": Variable.get("CHP_API_KEY"),
+    "RUN_TYPE": Variable.get("RUN_TYPE"),
+    "SPARK_APP_NAME": Variable.get("SPARK_APP_NAME"),
+    "HIVE_METASTORE_URI": Variable.get("HIVE_METASTORE_URI"),
 }
 
 
