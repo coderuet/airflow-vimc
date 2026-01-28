@@ -1,6 +1,6 @@
 from airflow import DAG
 from datetime import datetime
-from airflow.model import Variable
+from airflow.models import Variable
 
 from helpers.spark_helper import build_spark_application_yaml, create_spark_k8s_operator, create_spark_k8s_sensor
 
