@@ -1,5 +1,6 @@
 from airflow import DAG
 from datetime import datetime
+from airflow.models import Variable
 
 from helpers.spark_helper import build_spark_application_yaml, create_spark_k8s_operator, create_spark_k8s_sensor
 
@@ -30,10 +31,10 @@ ENV_VARS = {
     "DES_PATH": Variable.get("DES_PATH"),
     "SPARK_APP_NAME": Variable.get("SPARK_APP_NAME"),
     "RUN_TYPE": Variable.get("RUN_TYPE"),
-    "API_URL" : Variable.get("API_URL"),
-    "API_USERNAME" : Variable.get("API_USERNAME"),
-    "API_PASSWORD" : Variable.get("API_PASSWORD"),
-    "LIST_OF_COMPANY": Variable.get("LIST_OF_COMPANY"),
+    #"API_URL" : Variable.get("API_URL"),
+    # "API_USERNAME" : Variable.get("API_USERNAME"),
+    # "API_PASSWORD" : Variable.get("API_PASSWORD"),
+    # "LIST_OF_COMPANY": Variable.get("LIST_OF_COMPANY"),
 }
 
 with DAG(
