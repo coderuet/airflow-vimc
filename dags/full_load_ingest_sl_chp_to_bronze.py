@@ -11,6 +11,7 @@ ENV_VARS = {"ENV_JOB_RUN": "dev",
                           "MINIO_ACCESS_KEY": Variable.get("MINIO_ACCESS_KEY"),
                           "MINIO_SECRET_KEY": Variable.get("MINIO_SECRET_KEY"),
                           "MINIO_PATH_STYLE_ACCESS": Variable.get("MINIO_PATH_STYLE_ACCESS"),
+            "MINIO_LAKE_HOUSE_PATH": Variable.get("MINIO_LAKE_HOUSE_PATH"),
                           "BATCH_START_DATE": Variable.get("BATCH_START_DATE"),
                             "BATCH_END_DATE": Variable.get("BATCH_END_DATE"),
                           "DEFAULT_START_DATE": Variable.get("DEFAULT_START_DATE"),
@@ -20,7 +21,9 @@ ENV_VARS = {"ENV_JOB_RUN": "dev",
                           "CHP_API_KEY": Variable.get("CHP_API_KEY"),
                           "RUN_TYPE": Variable.get("RUN_TYPE"),
                           "SPARK_APP_NAME": Variable.get("SPARK_APP_NAME"),
-                          "HIVE_METASTORE_URI": Variable.get("HIVE_METASTORE_URI")
+                          "HIVE_METASTORE_URI": Variable.get("HIVE_METASTORE_URI"),
+                            "DES_PATH": Variable.get("DES_PATH"),
+                        "SPARK_APP_NAME": Variable.get("SPARK_APP_NAME"),
                           }
 
 default_args = {
@@ -31,7 +34,6 @@ default_args = {
 with DAG(
     dag_id='full_load_ingest_sl_chp_to_bronze',
     default_args=default_args,
-    schedule_interval='@daily',
     catchup=False,
     tags=['full', 'ingest', 'sl']
 ) as dag:
