@@ -1,5 +1,6 @@
 from airflow import DAG
 from datetime import datetime
+from airflow.models import Variable
 
 from helpers.spark_helper import build_spark_application_yaml, create_spark_k8s_operator, create_spark_k8s_sensor
 
@@ -37,20 +38,20 @@ ENV_VARS = {
 }
 
 with DAG(
-    dag_id='daily_process_sl_chp_bronze_to_standardization',
+    dag_id='daily_process_sl_chp_unify_to_gold',
     default_args=default_args,
     schedule_interval='@daily',
     catchup=False,
-    tags=['daily', 'process', 'sl_chp','']
+    tags=['daily', 'process', 'sl_chp','gold']
 ) as dag:
 
     # 1. Định nghĩa Manifest cho Spark Job
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials
     raw_manifest, app_name = build_spark_application_yaml(
-        job_suffix='daily-process-sl-chp-bronze-to-standardization',
-        main_class='vn.viettel.vlp_load.jobs.BronzeToStandardizationJob',
-        spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/muoilv/transform-chp/spark-ops-latest.jar',
+        job_suffix='daily-process-sl-chp-unify-to-gold',
+        main_class='vn.viettel.vlp_load.jobs.UnifyToGoldJob',
         env_vars=ENV_VARS,
+        spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/muoilv/transform-chp/spark-ops-latest.jar',
         arguments=[],
         executor_instances="2",  # Tùy chỉnh số lượng executor nếu cần
         executor_memory="2g"
