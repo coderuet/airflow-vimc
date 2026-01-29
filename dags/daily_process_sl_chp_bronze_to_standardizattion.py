@@ -47,7 +47,7 @@ with DAG(
     # 1. Định nghĩa Manifest cho Spark Job
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials
     raw_manifest, app_name = build_spark_application_yaml(
-        job_suffix='daily-process-sl-chp-bronze-to-standardization',
+        job_suffix='sl-chp-bronze-std',
         main_class='vn.viettel.vlp_load.jobs.BronzeToStandardizationJob',
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/muoilv/transform-chp/spark-ops-latest.jar',
         env_vars=ENV_VARS,
