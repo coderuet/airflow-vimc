@@ -19,6 +19,7 @@ import logging
 
 SPARK_MAIN_CLASS = "vn.viettel.RAW_ZONE"
 
+# Airflow Variables
 ENV_VARS = {"ENV_JOB_RUN": "dev"}
 
 default_args = {
