@@ -24,6 +24,7 @@ ENV_VARS = {"ENV_JOB_RUN": "dev",
                           "HIVE_METASTORE_URI": Variable.get("HIVE_METASTORE_URI"),
                             "DES_PATH": Variable.get("DES_PATH"),
                         "SPARK_APP_NAME": Variable.get("SPARK_APP_NAME"),
+            "ENVIROMENT": Variable.get("ENVIROMENT")
                           }
 
 default_args = {
@@ -47,7 +48,7 @@ with DAG(
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/minhnvq/dev-chp/spark-ops-latest.jar',
         arguments=[],
         executor_instances="2",  # Tùy chỉnh số lượng executor nếu cần
-        executor_memory="2g"
+        executor_memory="6g"
     )
 
     # 2. Tạo Task Submit
