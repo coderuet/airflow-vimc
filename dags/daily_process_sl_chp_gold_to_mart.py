@@ -38,18 +38,18 @@ ENV_VARS = {
 }
 
 with DAG(
-    dag_id='daily_process_sl_chp_unify_to_gold',
+    dag_id='daily_process_sl_chp_gold_to_mart',
     default_args=default_args,
     schedule_interval='@daily',
     catchup=False,
-    tags=['daily', 'process', 'sl_chp','gold']
+    tags=['daily', 'process', 'sl_chp','mart']
 ) as dag:
 
     # 1. Định nghĩa Manifest cho Spark Job
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials
     raw_manifest, app_name = build_spark_application_yaml(
-        job_suffix='daily-process-sl-chp-unify-to-gold',
-        main_class='vn.viettel.vlp_load.jobs.UnifyToGoldJob',
+        job_suffix='daily-process-sl-chp-gold-to-mart',
+        main_class='vn.viettel.vlp_load.jobs.GoldToMartJob',
         env_vars=ENV_VARS,
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/muoilv/transform-chp/spark-ops-latest.jar',
         arguments=[],
