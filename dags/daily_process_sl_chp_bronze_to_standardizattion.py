@@ -29,7 +29,6 @@ ENV_VARS = {
     "SPARK_APP_NAME": Variable.get("SPARK_APP_NAME"),
     "HIVE_METASTORE_URI": Variable.get("HIVE_METASTORE_URI"),
     "DES_PATH": Variable.get("DES_PATH"),
-    "SPARK_APP_NAME": Variable.get("SPARK_APP_NAME"),
     "RUN_TYPE": Variable.get("RUN_TYPE"),
     # "API_URL" : Variable.get("API_URL"),
     # "API_USERNAME" : Variable.get("API_USERNAME"),
