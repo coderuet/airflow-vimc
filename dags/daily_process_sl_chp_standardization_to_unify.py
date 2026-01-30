@@ -30,6 +30,7 @@ ENV_VARS = {
     "HIVE_METASTORE_URI": Variable.get("HIVE_METASTORE_URI"),
     "DES_PATH": Variable.get("DES_PATH"),
     "RUN_TYPE": Variable.get("RUN_TYPE"),
+    "ENVIROMENT": Variable.get("ENVIROMENT")
     #"API_URL" : Variable.get("API_URL"),
     # "API_USERNAME" : Variable.get("API_USERNAME"),
     # "API_PASSWORD" : Variable.get("API_PASSWORD"),
