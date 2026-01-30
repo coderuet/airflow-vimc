@@ -47,9 +47,9 @@ with DAG(
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials
     raw_manifest, app_name = build_spark_application_yaml(
         job_suffix='daily-ingest-tckt-to-bronze',
-        main_class='vn.viettel.vlp_load.ingestion.Ingest',
+        main_class='vn.viettel.vlp_load.ingestion.chp.tckt.TcktIngestion',
         env_vars=ENV_VARS,
-        spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/minhnvq/dev-chp/spark-ops-latest.jar',
+        spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/thuongdtt/bronze_tckt/spark-ops-latest.jar',
         arguments=[],
         executor_instances="1",  # Tùy chỉnh số lượng executor nếu cần
         executor_memory="8g"
