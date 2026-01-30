@@ -36,6 +36,7 @@ with DAG(
     dag_id='full_load_ingest_sl_chp_to_bronze',
     default_args=default_args,
     catchup=False,
+    schedule_interval=None,
     tags=['full', 'ingest', 'sl']
 ) as dag:
 

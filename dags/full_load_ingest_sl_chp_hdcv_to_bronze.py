@@ -37,6 +37,7 @@ with DAG(
     dag_id='full_load_ingest_sl_chp_hdcv_to_bronze',
     default_args=default_args,
     catchup=False,
+    schedule_interval=None,
     tags=['full', 'ingest', 'sl', 'chp_hdcv']
 ) as dag:
 
@@ -44,7 +45,7 @@ with DAG(
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials
     raw_manifest, app_name = build_spark_application_yaml(
         job_suffix='full-ingest-sl-to-bronze',
-        main_class='vn.viettel.vlp_load.ingestion.CHP.CHPHDCVIngestion',
+        main_class='vn.viettel.vlp_load.ingestion.CHP.Ingest',
         env_vars=ENV_VARS,
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/minhnvq/dev-chp/spark-ops-latest.jar',
         arguments=[],
