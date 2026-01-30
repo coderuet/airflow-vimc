@@ -52,7 +52,7 @@ with DAG(
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/thuongdtt/bronze_tckt/spark-ops-latest.jar',
         arguments=[],
         executor_instances="1",  # Tùy chỉnh số lượng executor nếu cần
-        executor_memory="8g"
+        executor_memory="4g"
     )
 
     # 2. Tạo Task Submit
