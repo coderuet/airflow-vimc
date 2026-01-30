@@ -45,7 +45,7 @@ with DAG(
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials
     raw_manifest, app_name = build_spark_application_yaml(
         job_suffix='full-ingest-sl-to-bronze',
-        main_class='vn.viettel.vlp_load.ingestion.CHP.Ingest',
+        main_class='vn.viettel.vlp_load.ingestion.Ingest',
         env_vars=ENV_VARS,
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/minhnvq/dev-chp/spark-ops-latest.jar',
         arguments=[],
