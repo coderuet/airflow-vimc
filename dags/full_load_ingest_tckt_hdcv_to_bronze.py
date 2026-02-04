@@ -32,7 +32,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id='full_load_ingest_sl_chp_hdcv_to_bronze',
+    dag_id='full_load_ingest_tckt_chp_hdcv_to_bronze',
     default_args=default_args,
     catchup=False,
     schedule_interval=None,
@@ -42,7 +42,7 @@ with DAG(
     # 1. Định nghĩa Manifest cho Spark Job
     # Helper sẽ tự động điền các thông tin về S3, Image, và Credentials
     raw_manifest, app_name = build_spark_application_yaml(
-        job_suffix='full-ingest-sl-to-bronze',
+        job_suffix='full-ingest-tckt-to-bronze',
         main_class='vn.viettel.vlp_load.ingestion.Ingest',
         env_vars=ENV_VARS,
         spark_main_jar='s3a://vimc/vimc/spark-artifacts/jobs/minhnvq/dev-chp/spark-ops-latest.jar',
