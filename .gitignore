@@ -2,3 +2,9 @@
 .claude
 .scannerwork/
 docs
+
+__pycache__/
+
+venv/
+
+logs/
